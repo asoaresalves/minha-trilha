@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Minha trilha</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #201d27;
+    --bg-raised: #29252f;
+    --bg-raised-2: #322d3a;
+    --ink: #efe9e2;
+    --ink-soft: #b9b2c2;
+    --ink-faint: #857d90;
+    --amber: #e0a84e;
+    --amber-deep: #a6772c;
+    --sage: #8ba17f;
+    --sage-deep: #5c7052;
+    --line: #3c3745;
+    --radius: 14px;
+  }
+  *{box-sizing:border-box;}
+  html{ background: var(--bg); }
+  body{
+    margin:0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Inter', -apple-system, sans-serif;
+    line-height: 1.55;
+    padding: 0 0 5rem;
+    -webkit-text-size-adjust: 100%;
+  }
+  .wrap{ max-width: 720px; margin: 0 auto; padding: 2.5rem 1.5rem 0; }
+  h1,h2,h3{ font-family:'Fraunces', serif; font-weight:500; margin:0; }
+  .eyebrow{
+    font-size: 12.5px; letter-spacing: .08em; text-transform: uppercase;
+    color: var(--ink-faint); margin: 0 0 .35rem;
+  }
+  header.top{ text-align:center; margin-bottom: 2rem; }
+  header.top .date{ color: var(--ink-soft); font-size: 14.5px; margin-top:.4rem; }
+  h1.title{ font-size: 28px; font-style: italic; line-height:1.25; }
+
+  .trilha{
+    background: var(--bg-raised);
+    border-radius: var(--radius);
+    padding: 1.4rem 1.3rem 1.2rem;
+    margin-bottom: 1.6rem;
+    border: 1px solid var(--line);
+  }
+  .trilha-head{ display:flex; justify-content:space-between; align-items:baseline; margin-bottom: 1rem; flex-wrap: wrap; gap:.4rem;}
+  .trilha-head h2{ font-size: 17px; }
+  .trilha-head .streak{ font-size: 13px; color: var(--amber); font-weight:500; }
+  .trilha-row{
+    display:flex; gap:8px; overflow-x:auto; padding-bottom:4px;
+    -webkit-overflow-scrolling: touch;
+  }
+  .pegada{
+    flex: 0 0 auto; display:flex; flex-direction:column; align-items:center; gap:6px;
+    min-width: 34px;
+  }
+  .pegada .dot{
+    width: 26px; height: 26px; border-radius: 50%;
+    background: var(--bg-raised-2);
+    border: 1px solid var(--line);
+  }
+  .pegada .dot.today{ border-color: var(--amber); }
+  .pegada .lbl{ font-size: 10.5px; color: var(--ink-faint); }
+
+  .regra{
+    background: transparent;
+    border-left: 2px solid var(--amber-deep);
+    padding: .9rem 1.1rem;
+    margin-bottom: 2rem;
+  }
+  .regra p{ margin:.35rem 0; font-size: 14.5px; color: var(--ink-soft); }
+  .regra p.forte{ color: var(--ink); font-family:'Fraunces', serif; font-style: italic; font-size: 16px; }
+
+  section.grupo{ margin-bottom: 2.2rem; }
+  .grupo-head{ display:flex; align-items:baseline; justify-content:space-between; margin-bottom: .9rem; }
+  .grupo-head h2{ font-size: 19px; }
+  .grupo-head .nota{ font-size: 12.5px; color: var(--ink-faint); }
+
+  label.item{
+    display:flex; align-items:flex-start; gap: 12px;
+    background: var(--bg-raised);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: .85rem 1rem;
+    margin-bottom: 8px;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  label.item.done{ background: var(--bg-raised-2); border-color: var(--sage-deep); }
+  label.item.essencial:not(.done){ border-color: var(--amber-deep); }
+
+  label.item input[type="checkbox"]{
+    appearance: none; -webkit-appearance: none;
+    flex: 0 0 auto; width: 22px; height: 22px; border-radius: 50%;
+    border: 1.5px solid var(--ink-faint);
+    margin: 1px 0 0;
+    background: transparent;
+    position: relative;
+  }
+  label.item input[type="checkbox"]:checked{ background: var(--sage); border-color: var(--sage); }
+  label.item input[type="checkbox"]:checked::after{
+    content:''; position:absolute; left:6px; top:2px; width:6px; height:11px;
+    border: solid #201d27; border-width: 0 2.5px 2.5px 0; transform: rotate(40deg);
+  }
+
+  .item-body{ flex:1; }
+  .item-title{ font-size: 15px; color: var(--ink); }
+  label.item.done .item-title{ color: var(--ink-soft); }
+  .item-sub{ font-size: 12.5px; color: var(--ink-faint); margin-top:2px; }
+  .badge{
+    display:none; font-size: 10.5px; color: var(--amber); border:1px solid var(--amber-deep);
+    padding: 1px 6px; border-radius: 20px; margin-left: 6px; vertical-align: middle;
+  }
+  label.item.essencial:not(.done) .badge{ display:inline-block; }
+
+  .resumo{
+    text-align:center; font-size: 13.5px; color: var(--ink-faint); margin: -.6rem 0 1.4rem;
+    font-style: italic; font-family:'Fraunces', serif;
+  }
+
+  .reflexao{
+    background: var(--bg-raised);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 1.3rem 1.3rem 1.1rem;
+    margin-bottom: 2.2rem;
+  }
+  .reflexao h2{ font-size: 17px; margin-bottom: .3rem; }
+  .reflexao .pergunta{
+    font-family:'Fraunces', serif; font-style: italic; font-size: 16.5px;
+    color: var(--amber); margin-bottom: .8rem;
+  }
+  textarea{
+    width:100%; min-height: 70px; resize: vertical;
+    background: var(--bg-raised-2); border: 1px solid var(--line); border-radius: 8px;
+    color: var(--ink); font-family: inherit; font-size: 16px; padding: .7rem .8rem;
+  }
+  textarea:focus{ outline: none; border-color: var(--amber-deep); }
+  .save-hint{ font-size: 12px; color: var(--ink-faint); margin-top:.4rem; min-height: 16px; }
+
+  details{ margin-top: .9rem; }
+  summary{ cursor:pointer; font-size: 13px; color: var(--ink-soft); }
+  .historico{ margin-top: .8rem; }
+  .hist-item{ font-size: 13.5px; color: var(--ink-soft); border-left: 2px solid var(--line); padding: .2rem .8rem; margin-bottom: .6rem; }
+  .hist-item .hist-data{ font-size: 11.5px; color: var(--ink-faint); display:block; margin-bottom:2px; }
+
+  .info-box{
+    background: var(--bg-raised); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 1.1rem 1.3rem; margin-bottom: 2rem; font-size: 13.5px; color: var(--ink-soft);
+  }
+  .info-box summary{ font-size: 14px; color: var(--ink); font-family:'Fraunces', serif; font-style: italic; }
+  .info-box p{ margin: .7rem 0 0; }
+
+  .aviso{
+    display:none;
+    background: var(--bg-raised-2); border: 1px solid var(--amber-deep); border-radius: 10px;
+    padding: .8rem 1rem; margin-bottom: 1.5rem; font-size: 13px; color: var(--ink-soft);
+  }
+
+  footer{ text-align:center; padding: 1.5rem 0 0; font-size: 12px; color: var(--ink-faint); }
+
+  @media (max-width: 480px){
+    h1.title{ font-size: 23px; }
+    .wrap{ padding: 1.8rem 1.1rem 0; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <p class="eyebrow">não é uma grade. são possibilidades.</p>
+    <h1 class="title">Quanto da minha vida eu vivi hoje?</h1>
+    <p class="date" id="dataHoje"></p>
+  </header>
+
+  <div class="aviso" id="avisoStorage">Seu navegador não está permitindo salvar as marcações neste modo de visualização. Abra este arquivo direto pelo Safari (não pelo app Arquivos ou por uma pré-visualização) para que tudo funcione e fique salvo.</div>
+
+  <div class="trilha">
+    <div class="trilha-head">
+      <h2>Minha trilha</h2>
+      <span class="streak" id="streakLbl"></span>
+    </div>
+    <div class="trilha-row" id="trilhaRow"></div>
+  </div>
+
+  <div class="regra">
+    <p class="forte">Não preciso cumprir tudo para considerar que tive um bom dia.</p>
+    <p>Essas são possibilidades para construir uma vida mais rica — não obrigações para preencher cada minuto. O objetivo não é simplesmente ficar ocupado. É descobrir um sentido novo, coisas que valem a pena por si mesmas.</p>
+  </div>
+
+  <section class="grupo">
+    <div class="grupo-head">
+      <h2>Hoje</h2>
+    </div>
+    <p class="resumo" id="resumoHoje"></p>
+
+    <label class="item essencial" data-id="cigarro">
+      <input type="checkbox" data-day-item="cigarro">
+      <div class="item-body">
+        <div class="item-title">Mais um dia sem cigarro<span class="badge">essencial nas 1as semanas</span></div>
+      </div>
+    </label>
+
+    <label class="item" data-id="aprendizado">
+      <input type="checkbox" data-day-item="aprendizado">
+      <div class="item-body">
+        <div class="item-title">Aprendizado</div>
+        <div class="item-sub">inglês, IA ou filosofia — o que fizer sentido hoje, não precisa ser os três nem todo dia</div>
+      </div>
+    </label>
+
+    <label class="item" data-id="leitura">
+      <input type="checkbox" data-day-item="leitura">
+      <div class="item-body">
+        <div class="item-title">Leitura</div>
+        <div class="item-sub">o tempo que der vontade, o que der vontade de ler</div>
+      </div>
+    </label>
+
+    <label class="item essencial" data-id="corpo">
+      <input type="checkbox" data-day-item="corpo">
+      <div class="item-body">
+        <div class="item-title">Movimentar o corpo<span class="badge">essencial nas 1as semanas</span></div>
+        <div class="item-sub">academia, esporte, caminhada ou outra atividade</div>
+      </div>
+    </label>
+
+    <label class="item essencial" data-id="sair">
+      <input type="checkbox" data-day-item="sair">
+      <div class="item-body">
+        <div class="item-title">Sair de casa pelo menos uma vez<span class="badge">essencial nas 1as semanas</span></div>
+        <div class="item-sub">mesmo sem necessidade</div>
+      </div>
+    </label>
+
+    <label class="item essencial" data-id="contato">
+      <input type="checkbox" data-day-item="contato">
+      <div class="item-body">
+        <div class="item-title">Contato humano real<span class="badge">essencial nas 1as semanas</span></div>
+        <div class="item-sub">conversar pessoalmente, ligar, tomar um café, ver um amigo</div>
+      </div>
+    </label>
+
+    <label class="item" data-id="prazer">
+      <input type="checkbox" data-day-item="prazer">
+      <div class="item-body">
+        <div class="item-title">Fazer algo só porque dá prazer</div>
+        <div class="item-sub">sem precisar ser útil</div>
+      </div>
+    </label>
+
+    <label class="item" data-id="telamusica">
+      <input type="checkbox" data-day-item="telamusica">
+      <div class="item-body">
+        <div class="item-title">TV ou música</div>
+        <div class="item-sub">por puro prazer, sem culpa</div>
+      </div>
+    </label>
+
+    <label class="item" data-id="redes">
+      <input type="checkbox" data-day-item="redes">
+      <div class="item-body">
+        <div class="item-title">Evitei preencher os vazios com redes sociais</div>
+      </div>
+    </label>
+  </section>
+
+  <details class="info-box" open>
+    <summary>Nas primeiras duas semanas, isto já é excelente</summary>
+    <p>Sem cigarro + atividade física + sair de casa + algum contato humano real. Os itens marcados com <span style="color:var(--amber)">um contorno âmbar</span> são esse núcleo. Aprendizado, leitura, TV ou música e o resto vão se somando com o tempo — sem pressa, e não precisam acontecer todo dia.</p>
+  </details>
+
+  <section class="grupo">
+    <div class="grupo-head">
+      <h2>Durante a semana</h2>
+      <span class="nota">reinicia toda segunda</span>
+    </div>
+
+    <label class="item" data-id="amigo">
+      <input type="checkbox" data-week-item="amigo">
+      <div class="item-body">
+        <div class="item-title">Encontrar um amigo</div>
+        <div class="item-sub">café, almoço, chope, caminhada...</div>
+      </div>
+    </label>
+
+    <label class="item" data-id="coletivo">
+      <input type="checkbox" data-week-item="coletivo">
+      <div class="item-body">
+        <div class="item-title">Atividade coletiva</div>
+        <div class="item-sub">com possibilidade de conhecer pessoas</div>
+      </div>
+    </label>
+
+    <label class="item" data-id="diferente">
+      <input type="checkbox" data-week-item="diferente">
+      <div class="item-body">
+        <div class="item-title">Fazer algo diferente</div>
+        <div class="item-sub">lugar, restaurante, exposição, palestra, bairro, evento</div>
+      </div>
+    </label>
+
+    <label class="item" data-id="esporte">
+      <input type="checkbox" data-week-item="esporte">
+      <div class="item-body">
+        <div class="item-title">Praticar esporte / atividade física</div>
+        <div class="item-sub">algumas vezes na semana</div>
+      </div>
+    </label>
+
+    <label class="item" data-id="livre">
+      <input type="checkbox" data-week-item="livre">
+      <div class="item-body">
+        <div class="item-title">Um período livre</div>
+        <div class="item-sub">sem compromisso, decido na hora o que quero fazer</div>
+      </div>
+    </label>
+
+    <label class="item" data-id="contribuir">
+      <input type="checkbox" data-week-item="contribuir">
+      <div class="item-body">
+        <div class="item-title">Buscar uma oportunidade de contribuir</div>
+        <div class="item-sub">ensinar, orientar, ajudar, participar de um projeto</div>
+      </div>
+    </label>
+
+    <label class="item" data-id="novaconexao">
+      <input type="checkbox" data-week-item="novaconexao">
+      <div class="item-body">
+        <div class="item-title">Manter contato com alguém novo interessante</div>
+      </div>
+    </label>
+  </section>
+
+  <div class="reflexao">
+    <h2>Fim do dia</h2>
+    <p class="pergunta">O que hoje despertou meu interesse ou me deu prazer?</p>
+    <textarea id="reflexaoTexto" placeholder="Escreva livremente, sem compromisso de tamanho..."></textarea>
+    <div class="save-hint" id="saveHint"></div>
+    <details>
+      <summary>Ver reflexões anteriores</summary>
+      <div class="historico" id="historico"></div>
+    </details>
+  </div>
+
+  <div class="reflexao" id="backupBox">
+    <h2>Backup</h2>
+    <p class="item-sub" style="margin-bottom:.8rem;">Se o Safari perder os dados salvos, use isto para não perder tudo. Toque em "Copiar backup" de vez em quando (por exemplo, no fim do dia) e guarde o texto em algum lugar seguro — Notas, por exemplo. Para restaurar, cole o texto de volta abaixo e toque em "Restaurar".</p>
+    <textarea id="backupTexto" style="min-height:90px; font-size:12px; font-family:monospace;" placeholder="O backup copiado aparece aqui, ou cole um backup antigo para restaurar"></textarea>
+    <div style="display:flex; gap:8px; margin-top:.7rem; flex-wrap:wrap;">
+      <button type="button" id="btnCopiarBackup" style="flex:1; min-width:130px; padding:.6rem; border-radius:8px; border:1px solid var(--line); background:var(--bg-raised-2); color:var(--ink); font-size:13.5px;">Copiar backup</button>
+      <button type="button" id="btnRestaurarBackup" style="flex:1; min-width:130px; padding:.6rem; border-radius:8px; border:1px solid var(--amber-deep); background:var(--bg-raised-2); color:var(--amber); font-size:13.5px;">Restaurar</button>
+    </div>
+    <div class="save-hint" id="backupHint"></div>
+  </div>
+
+  <footer>Seus dados ficam salvos neste dispositivo, associados a este arquivo.</footer>
+</div>
+
+<script>
+function pad(n){ return String(n).padStart(2,'0'); }
+function dateKey(d){ return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()); }
+function isoWeekKey(d){
+  var dt = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+  var dayNum = dt.getUTCDay() || 7;
+  dt.setUTCDate(dt.getUTCDate() + 4 - dayNum);
+  var yearStart = new Date(Date.UTC(dt.getUTCFullYear(),0,1));
+  var weekNo = Math.ceil((((dt - yearStart) / 86400000) + 1) / 7);
+  return dt.getUTCFullYear() + '-W' + pad(weekNo);
+}
+
+var storageWorks = true;
+try{
+  localStorage.setItem('trilha:test','1');
+  localStorage.removeItem('trilha:test');
+}catch(e){ storageWorks = false; }
+if(!storageWorks){ document.getElementById('avisoStorage').style.display = 'block'; }
+
+function loadDay(key){
+  try{
+    var v = localStorage.getItem('trilha:day:' + key);
+    return v ? JSON.parse(v) : { daily:{}, reflexao:'' };
+  }catch(e){ return { daily:{}, reflexao:'' }; }
+}
+function saveDay(key, state){
+  try{ localStorage.setItem('trilha:day:' + key, JSON.stringify(state)); }catch(e){}
+}
+function loadWeek(key){
+  try{
+    var v = localStorage.getItem('trilha:week:' + key);
+    return v ? JSON.parse(v) : { weekly:{} };
+  }catch(e){ return { weekly:{} }; }
+}
+function saveWeek(key, state){
+  try{ localStorage.setItem('trilha:week:' + key, JSON.stringify(state)); }catch(e){}
+}
+
+var today = new Date();
+var todayKey = dateKey(today);
+var weekKey = isoWeekKey(today);
+
+var diasSemana = ['domingo','segunda-feira','terça-feira','quarta-feira','quinta-feira','sexta-feira','sábado'];
+var meses = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+document.getElementById('dataHoje').textContent =
+  diasSemana[today.getDay()] + ', ' + today.getDate() + ' de ' + meses[today.getMonth()];
+
+var dayState = loadDay(todayKey);
+var weekState = loadWeek(weekKey);
+
+document.querySelectorAll('input[data-day-item]').forEach(function(cb){
+  var id = cb.getAttribute('data-day-item');
+  var label = cb.closest('label.item');
+  cb.checked = !!dayState.daily[id];
+  if(cb.checked) label.classList.add('done');
+  cb.addEventListener('change', function(){
+    dayState.daily[id] = cb.checked;
+    label.classList.toggle('done', cb.checked);
+    saveDay(todayKey, dayState);
+    renderResumo();
+    renderTrilha();
+  });
+});
+
+document.querySelectorAll('input[data-week-item]').forEach(function(cb){
+  var id = cb.getAttribute('data-week-item');
+  var label = cb.closest('label.item');
+  cb.checked = !!weekState.weekly[id];
+  if(cb.checked) label.classList.add('done');
+  cb.addEventListener('change', function(){
+    weekState.weekly[id] = cb.checked;
+    label.classList.toggle('done', cb.checked);
+    saveWeek(weekKey, weekState);
+  });
+});
+
+function renderResumo(){
+  var n = Object.values(dayState.daily).filter(Boolean).length;
+  var el = document.getElementById('resumoHoje');
+  if(n === 0) el.textContent = 'ainda nada marcado — sem problema';
+  else el.textContent = 'hoje você viveu ' + n + (n>1 ? ' coisas' : ' coisa');
+}
+
+var trilhaCache = {};
+function renderTrilha(){
+  var row = document.getElementById('trilhaRow');
+  row.innerHTML = '';
+  var abrevDias = ['D','S','T','Q','Q','S','S'];
+  for(var i = 13; i >= 0; i--){
+    var d = new Date(today);
+    d.setDate(d.getDate() - i);
+    var key = dateKey(d);
+    var count;
+    if(key === todayKey){
+      count = Object.values(dayState.daily).filter(Boolean).length;
+    } else if(trilhaCache[key] !== undefined){
+      count = trilhaCache[key];
+    } else {
+      var st = loadDay(key);
+      count = Object.values(st.daily).filter(Boolean).length;
+      trilhaCache[key] = count;
+    }
+    var intensity = Math.min(count / 6, 1);
+    var dot = document.createElement('div');
+    dot.className = 'pegada';
+    var bg = intensity === 0 ? 'var(--bg-raised-2)' :
+      'color-mix(in srgb, var(--amber) ' + Math.round(intensity*90) + '%, var(--bg-raised-2))';
+    dot.innerHTML = '<div class="dot' + (key===todayKey?' today':'') + '" style="background:' + bg + '"></div><div class="lbl">' + abrevDias[d.getDay()] + '</div>';
+    row.appendChild(dot);
+  }
+
+  var streak = 0;
+  var cursor = new Date(today);
+  while(true){
+    var k = dateKey(cursor);
+    var val;
+    if(k === todayKey) val = !!dayState.daily['cigarro'];
+    else{
+      var s = loadDay(k);
+      val = !!s.daily['cigarro'];
+    }
+    if(val){ streak++; cursor.setDate(cursor.getDate()-1); }
+    else break;
+  }
+  document.getElementById('streakLbl').textContent =
+    streak > 0 ? (streak + (streak>1 ? ' dias' : ' dia') + ' sem cigarro') : '';
+}
+
+function renderHistorico(){
+  var box = document.getElementById('historico');
+  box.innerHTML = '';
+  var any = false;
+  for(var i = 1; i <= 10; i++){
+    var d = new Date(today);
+    d.setDate(d.getDate() - i);
+    var key = dateKey(d);
+    var st = loadDay(key);
+    if(st.reflexao && st.reflexao.trim()){
+      any = true;
+      var div = document.createElement('div');
+      div.className = 'hist-item';
+      div.innerHTML = '<span class="hist-data">' + d.getDate() + ' de ' + meses[d.getMonth()] + '</span>' + st.reflexao;
+      box.appendChild(div);
+    }
+  }
+  if(!any) box.innerHTML = '<div class="hist-item" style="border-color:transparent">nada por aqui ainda.</div>';
+}
+
+document.getElementById('reflexaoTexto').value = dayState.reflexao || '';
+var saveTimer = null;
+document.getElementById('reflexaoTexto').addEventListener('input', function(e){
+  dayState.reflexao = e.target.value;
+  var hint = document.getElementById('saveHint');
+  hint.textContent = 'salvando...';
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(function(){
+    saveDay(todayKey, dayState);
+    hint.textContent = 'salvo';
+    setTimeout(function(){ if(hint.textContent==='salvo') hint.textContent=''; }, 1500);
+  }, 600);
+});
+
+renderResumo();
+renderTrilha();
+renderHistorico();
+
+document.getElementById('btnCopiarBackup').addEventListener('click', function(){
+  var dados = {};
+  for(var i = 0; i < localStorage.length; i++){
+    var k = localStorage.key(i);
+    if(k.indexOf('trilha:') === 0) dados[k] = localStorage.getItem(k);
+  }
+  var texto = JSON.stringify(dados);
+  document.getElementById('backupTexto').value = texto;
+  var hint = document.getElementById('backupHint');
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(texto).then(function(){
+      hint.textContent = 'copiado — cole em algum lugar seguro (ex: Notas)';
+    }).catch(function(){
+      hint.textContent = 'não deu para copiar automaticamente — selecione o texto acima e copie manualmente';
+    });
+  } else {
+    hint.textContent = 'selecione o texto acima e copie manualmente';
+  }
+});
+
+document.getElementById('btnRestaurarBackup').addEventListener('click', function(){
+  var hint = document.getElementById('backupHint');
+  var texto = document.getElementById('backupTexto').value.trim();
+  if(!texto){ hint.textContent = 'cole um backup no campo acima primeiro'; return; }
+  try{
+    var dados = JSON.parse(texto);
+    Object.keys(dados).forEach(function(k){
+      if(k.indexOf('trilha:') === 0) localStorage.setItem(k, dados[k]);
+    });
+    hint.textContent = 'restaurado — recarregando...';
+    setTimeout(function(){ location.reload(); }, 700);
+  }catch(e){
+    hint.textContent = 'esse texto não parece um backup válido';
+  }
+});
+</script>
+</body>
+</html>

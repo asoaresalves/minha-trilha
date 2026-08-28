@@ -19,6 +19,7 @@
     --amber-deep: #a6772c;
     --sage: #8ba17f;
     --sage-deep: #5c7052;
+    --blue: #7f9bb0;
     --line: #3c3745;
     --radius: 14px;
   }
@@ -33,21 +34,46 @@
     padding: 0 0 5rem;
     -webkit-text-size-adjust: 100%;
   }
-  .wrap{ max-width: 720px; margin: 0 auto; padding: 2.5rem 1.5rem 0; }
+  .wrap{ max-width: 720px; margin: 0 auto; padding: 2.2rem 1.5rem 0; }
   h1,h2,h3{ font-family:'Fraunces', serif; font-weight:500; margin:0; }
   .eyebrow{
     font-size: 12.5px; letter-spacing: .08em; text-transform: uppercase;
     color: var(--ink-faint); margin: 0 0 .35rem;
   }
-  header.top{ text-align:center; margin-bottom: 2rem; }
-  header.top .date{ color: var(--ink-soft); font-size: 14.5px; margin-top:.4rem; }
-  h1.title{ font-size: 28px; font-style: italic; line-height:1.25; }
+  header.top{ text-align:center; margin-bottom: 1.6rem; }
+  h1.title{ font-size: 26px; font-style: italic; line-height:1.25; }
+
+  .navdia{
+    display:flex; align-items:center; justify-content:center; gap:.6rem;
+    margin: 1.1rem 0 0;
+  }
+  .navdia button{
+    background: var(--bg-raised); border: 1px solid var(--line); color: var(--ink);
+    width: 34px; height: 34px; border-radius: 50%; font-size: 16px; cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .navdia button:disabled{ opacity:.3; }
+  .navdia .diaLabel{
+    min-width: 190px; text-align:center; font-size: 14.5px; color: var(--ink-soft);
+    display:flex; flex-direction:column; gap:1px;
+  }
+  .navdia .diaLabel b{ color: var(--ink); font-weight:500; }
+  .navdia .hojebtn{
+    font-size: 11.5px; color: var(--amber); background:transparent; border: 1px solid var(--amber-deep);
+    border-radius: 20px; padding: 3px 10px; width:auto; height:auto; cursor:pointer;
+  }
+  .navdia .hojebtn[hidden]{ display:none; }
+  input[type="date"]{
+    background: var(--bg-raised); border: 1px solid var(--line); color: var(--ink-soft);
+    border-radius: 8px; padding: 4px 6px; font-size: 12px; font-family: inherit; margin-top: 6px;
+    color-scheme: dark;
+  }
 
   .trilha{
     background: var(--bg-raised);
     border-radius: var(--radius);
     padding: 1.4rem 1.3rem 1.2rem;
-    margin-bottom: 1.6rem;
+    margin: 1.6rem 0;
     border: 1px solid var(--line);
   }
   .trilha-head{ display:flex; justify-content:space-between; align-items:baseline; margin-bottom: 1rem; flex-wrap: wrap; gap:.4rem;}
@@ -59,14 +85,15 @@
   }
   .pegada{
     flex: 0 0 auto; display:flex; flex-direction:column; align-items:center; gap:6px;
-    min-width: 34px;
+    min-width: 34px; cursor:pointer; background:none; border:none; padding:0; font-family:inherit;
   }
   .pegada .dot{
     width: 26px; height: 26px; border-radius: 50%;
     background: var(--bg-raised-2);
     border: 1px solid var(--line);
   }
-  .pegada .dot.today{ border-color: var(--amber); }
+  .pegada .dot.today{ border-color: var(--amber); border-width: 1.5px; }
+  .pegada .dot.selected{ box-shadow: 0 0 0 2px var(--blue); }
   .pegada .lbl{ font-size: 10.5px; color: var(--ink-faint); }
 
   .regra{
@@ -148,7 +175,7 @@
   details{ margin-top: .9rem; }
   summary{ cursor:pointer; font-size: 13px; color: var(--ink-soft); }
   .historico{ margin-top: .8rem; }
-  .hist-item{ font-size: 13.5px; color: var(--ink-soft); border-left: 2px solid var(--line); padding: .2rem .8rem; margin-bottom: .6rem; }
+  .hist-item{ font-size: 13.5px; color: var(--ink-soft); border-left: 2px solid var(--line); padding: .2rem .8rem; margin-bottom: .6rem; cursor:pointer; }
   .hist-item .hist-data{ font-size: 11.5px; color: var(--ink-faint); display:block; margin-bottom:2px; }
 
   .info-box{
@@ -164,11 +191,39 @@
     padding: .8rem 1rem; margin-bottom: 1.5rem; font-size: 13px; color: var(--ink-soft);
   }
 
+  /* estatísticas */
+  .stats{
+    background: var(--bg-raised); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 1.3rem 1.3rem 1.1rem; margin-bottom: 2.2rem;
+  }
+  .stats h2{ font-size: 19px; margin-bottom: .2rem; }
+  .stats .sub{ font-size: 12.5px; color: var(--ink-faint); margin-bottom: 1rem; }
+  .stat-linha{
+    display:flex; justify-content: space-between; gap: 10px; padding: .55rem 0;
+    border-bottom: 1px solid var(--line); font-size: 13.5px;
+  }
+  .stat-linha:last-child{ border-bottom:none; }
+  .stat-linha .rotulo{ color: var(--ink-soft); }
+  .stat-linha .valor{ color: var(--ink); font-weight:500; white-space:nowrap; }
+  .stat-destaques{ display:flex; gap: 10px; margin-bottom: 1rem; flex-wrap: wrap; }
+  .stat-card{
+    flex: 1; min-width: 120px; background: var(--bg-raised-2); border-radius: 10px;
+    padding: .8rem .9rem; text-align:center;
+  }
+  .stat-card .num{ font-family:'Fraunces', serif; font-size: 24px; color: var(--amber); }
+  .stat-card .lbl{ font-size: 11.5px; color: var(--ink-faint); margin-top: 2px; }
+  .barra-item{ margin-bottom: .6rem; }
+  .barra-item .topo{ display:flex; justify-content:space-between; font-size: 12.5px; color: var(--ink-soft); margin-bottom: 3px; }
+  .barra-fundo{ background: var(--bg-raised-2); border-radius: 6px; height: 7px; overflow:hidden; }
+  .barra-preenchida{ background: var(--sage); height:100%; border-radius:6px; }
+  .stats-grupo-titulo{ font-size: 12.5px; text-transform:uppercase; letter-spacing:.05em; color: var(--ink-faint); margin: 1.1rem 0 .5rem; }
+
   footer{ text-align:center; padding: 1.5rem 0 0; font-size: 12px; color: var(--ink-faint); }
 
   @media (max-width: 480px){
-    h1.title{ font-size: 23px; }
-    .wrap{ padding: 1.8rem 1.1rem 0; }
+    h1.title{ font-size: 21px; }
+    .wrap{ padding: 1.6rem 1.1rem 0; }
+    .navdia .diaLabel{ min-width: 140px; font-size: 13px; }
   }
 </style>
 </head>
@@ -178,7 +233,17 @@
   <header class="top">
     <p class="eyebrow">não é uma grade. são possibilidades.</p>
     <h1 class="title">Quanto da minha vida eu vivi hoje?</h1>
-    <p class="date" id="dataHoje"></p>
+    <div class="navdia">
+      <button type="button" id="btnAnterior" aria-label="dia anterior">‹</button>
+      <div class="diaLabel">
+        <b id="diaLabelTexto">—</b>
+        <input type="date" id="dataInput">
+      </div>
+      <button type="button" id="btnProximo" aria-label="próximo dia">›</button>
+    </div>
+    <div style="margin-top:.5rem;">
+      <button type="button" class="hojebtn" id="btnHoje" hidden>voltar para hoje</button>
+    </div>
   </header>
 
   <div class="aviso" id="avisoStorage">Seu navegador não está permitindo salvar as marcações neste modo de visualização. Abra este arquivo direto pelo Safari (não pelo app Arquivos ou por uma pré-visualização) para que tudo funcione e fique salvo.</div>
@@ -198,7 +263,7 @@
 
   <section class="grupo">
     <div class="grupo-head">
-      <h2>Hoje</h2>
+      <h2 id="tituloHoje">Hoje</h2>
     </div>
     <p class="resumo" id="resumoHoje"></p>
 
@@ -281,7 +346,7 @@
   <section class="grupo">
     <div class="grupo-head">
       <h2>Durante a semana</h2>
-      <span class="nota">reinicia toda segunda</span>
+      <span class="nota" id="semanaLabel"></span>
     </div>
 
     <label class="item" data-id="amigo">
@@ -341,19 +406,29 @@
   </section>
 
   <div class="reflexao">
-    <h2>Fim do dia</h2>
+    <h2 id="tituloReflexao">Fim do dia</h2>
     <p class="pergunta">O que hoje despertou meu interesse ou me deu prazer?</p>
     <textarea id="reflexaoTexto" placeholder="Escreva livremente, sem compromisso de tamanho..."></textarea>
     <div class="save-hint" id="saveHint"></div>
     <details>
-      <summary>Ver reflexões anteriores</summary>
+      <summary>Ver reflexões anteriores (toque para abrir aquele dia)</summary>
       <div class="historico" id="historico"></div>
     </details>
   </div>
 
+  <div class="stats" id="statsBox">
+    <h2>Seu percurso até aqui</h2>
+    <p class="sub" id="statsSub"></p>
+    <div class="stat-destaques" id="statsDestaques"></div>
+    <div class="stats-grupo-titulo">Frequência das atividades diárias</div>
+    <div id="statsDiarias"></div>
+    <div class="stats-grupo-titulo">Atividades semanais (semanas com pelo menos um registro)</div>
+    <div id="statsSemanais"></div>
+  </div>
+
   <div class="reflexao" id="backupBox">
     <h2>Backup</h2>
-    <p class="item-sub" style="margin-bottom:.8rem;">Se o Safari perder os dados salvos, use isto para não perder tudo. Toque em "Copiar backup" de vez em quando (por exemplo, no fim do dia) e guarde o texto em algum lugar seguro — Notas, por exemplo. Para restaurar, cole o texto de volta abaixo e toque em "Restaurar".</p>
+    <p class="item-sub" style="margin-bottom:.8rem;">Se o Safari perder os dados salvos, use isto para não perder tudo. Toque em "Copiar backup" de vez em quando e guarde o texto em algum lugar seguro — Notas, por exemplo. Para restaurar, cole o texto de volta abaixo e toque em "Restaurar".</p>
     <textarea id="backupTexto" style="min-height:90px; font-size:12px; font-family:monospace;" placeholder="O backup copiado aparece aqui, ou cole um backup antigo para restaurar"></textarea>
     <div style="display:flex; gap:8px; margin-top:.7rem; flex-wrap:wrap;">
       <button type="button" id="btnCopiarBackup" style="flex:1; min-width:130px; padding:.6rem; border-radius:8px; border:1px solid var(--line); background:var(--bg-raised-2); color:var(--ink); font-size:13.5px;">Copiar backup</button>
@@ -366,8 +441,20 @@
 </div>
 
 <script>
+var DAILY_LABELS = {
+  cigarro: 'Sem cigarro', aprendizado: 'Aprendizado', leitura: 'Leitura',
+  corpo: 'Movimentar o corpo', sair: 'Sair de casa', contato: 'Contato humano real',
+  prazer: 'Prazer sem utilidade', telamusica: 'TV ou música', redes: 'Evitei redes sociais'
+};
+var WEEKLY_LABELS = {
+  amigo: 'Encontrar um amigo', coletivo: 'Atividade coletiva', diferente: 'Algo diferente',
+  esporte: 'Esporte / atividade física', livre: 'Período livre', contribuir: 'Oportunidade de contribuir',
+  novaconexao: 'Nova conexão'
+};
+
 function pad(n){ return String(n).padStart(2,'0'); }
 function dateKey(d){ return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()); }
+function keyToDate(key){ var p = key.split('-'); return new Date(parseInt(p[0]),parseInt(p[1])-1,parseInt(p[2])); }
 function isoWeekKey(d){
   var dt = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
   var dayNum = dt.getUTCDay() || 7;
@@ -376,28 +463,28 @@ function isoWeekKey(d){
   var weekNo = Math.ceil((((dt - yearStart) / 86400000) + 1) / 7);
   return dt.getUTCFullYear() + '-W' + pad(weekNo);
 }
+function startOfWeek(d){
+  var dow = d.getDay() === 0 ? 7 : d.getDay();
+  var dt = new Date(d);
+  dt.setDate(dt.getDate() - (dow - 1));
+  return dt;
+}
 
 var storageWorks = true;
-try{
-  localStorage.setItem('trilha:test','1');
-  localStorage.removeItem('trilha:test');
-}catch(e){ storageWorks = false; }
+try{ localStorage.setItem('trilha:test','1'); localStorage.removeItem('trilha:test'); }
+catch(e){ storageWorks = false; }
 if(!storageWorks){ document.getElementById('avisoStorage').style.display = 'block'; }
 
 function loadDay(key){
-  try{
-    var v = localStorage.getItem('trilha:day:' + key);
-    return v ? JSON.parse(v) : { daily:{}, reflexao:'' };
-  }catch(e){ return { daily:{}, reflexao:'' }; }
+  try{ var v = localStorage.getItem('trilha:day:' + key); return v ? JSON.parse(v) : { daily:{}, reflexao:'' }; }
+  catch(e){ return { daily:{}, reflexao:'' }; }
 }
 function saveDay(key, state){
   try{ localStorage.setItem('trilha:day:' + key, JSON.stringify(state)); }catch(e){}
 }
 function loadWeek(key){
-  try{
-    var v = localStorage.getItem('trilha:week:' + key);
-    return v ? JSON.parse(v) : { weekly:{} };
-  }catch(e){ return { weekly:{} }; }
+  try{ var v = localStorage.getItem('trilha:week:' + key); return v ? JSON.parse(v) : { weekly:{} }; }
+  catch(e){ return { weekly:{} }; }
 }
 function saveWeek(key, state){
   try{ localStorage.setItem('trilha:week:' + key, JSON.stringify(state)); }catch(e){}
@@ -405,25 +492,70 @@ function saveWeek(key, state){
 
 var today = new Date();
 var todayKey = dateKey(today);
-var weekKey = isoWeekKey(today);
-
 var diasSemana = ['domingo','segunda-feira','terça-feira','quarta-feira','quinta-feira','sexta-feira','sábado'];
+var diasSemanaAbrev = ['dom','seg','ter','qua','qui','sex','sáb'];
 var meses = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
-document.getElementById('dataHoje').textContent =
-  diasSemana[today.getDay()] + ', ' + today.getDate() + ' de ' + meses[today.getMonth()];
 
-var dayState = loadDay(todayKey);
-var weekState = loadWeek(weekKey);
+var viewingDate = new Date(today);
+var viewingKey = todayKey;
+var dayState = loadDay(viewingKey);
+var weekState = loadWeek(isoWeekKey(viewingDate));
+
+function fmtDataCompleta(d){
+  return diasSemana[d.getDay()] + ', ' + d.getDate() + ' de ' + meses[d.getMonth()];
+}
+
+function refreshHeader(){
+  var isToday = viewingKey === todayKey;
+  document.getElementById('diaLabelTexto').textContent = fmtDataCompleta(viewingDate);
+  document.getElementById('dataInput').value = viewingKey;
+  document.getElementById('btnHoje').hidden = isToday;
+  document.getElementById('btnProximo').disabled = isToday;
+  document.getElementById('tituloHoje').textContent = isToday ? 'Hoje' : diasSemanaAbrev[viewingDate.getDay()].replace(/^./, function(c){return c.toUpperCase();}) + '-feira, ' + viewingDate.getDate() + '/' + (viewingDate.getMonth()+1);
+  document.getElementById('tituloReflexao').textContent = isToday ? 'Fim do dia' : 'Reflexão daquele dia';
+}
+
+function refreshDailyUI(){
+  document.querySelectorAll('input[data-day-item]').forEach(function(cb){
+    var id = cb.getAttribute('data-day-item');
+    var label = cb.closest('label.item');
+    cb.checked = !!dayState.daily[id];
+    label.classList.toggle('done', cb.checked);
+  });
+  document.getElementById('reflexaoTexto').value = dayState.reflexao || '';
+  renderResumo();
+}
+
+function refreshWeeklyUI(){
+  var wk = isoWeekKey(viewingDate);
+  weekState = loadWeek(wk);
+  var ini = startOfWeek(viewingDate);
+  var fim = new Date(ini); fim.setDate(fim.getDate()+6);
+  document.getElementById('semanaLabel').textContent = 'semana de ' + ini.getDate() + '/' + (ini.getMonth()+1) + ' a ' + fim.getDate() + '/' + (fim.getMonth()+1);
+  document.querySelectorAll('input[data-week-item]').forEach(function(cb){
+    var id = cb.getAttribute('data-week-item');
+    var label = cb.closest('label.item');
+    cb.checked = !!weekState.weekly[id];
+    label.classList.toggle('done', cb.checked);
+  });
+}
+
+function selectDate(d){
+  viewingDate = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  viewingKey = dateKey(viewingDate);
+  dayState = loadDay(viewingKey);
+  refreshHeader();
+  refreshDailyUI();
+  refreshWeeklyUI();
+  renderTrilha();
+}
 
 document.querySelectorAll('input[data-day-item]').forEach(function(cb){
   var id = cb.getAttribute('data-day-item');
-  var label = cb.closest('label.item');
-  cb.checked = !!dayState.daily[id];
-  if(cb.checked) label.classList.add('done');
   cb.addEventListener('change', function(){
     dayState.daily[id] = cb.checked;
-    label.classList.toggle('done', cb.checked);
-    saveDay(todayKey, dayState);
+    cb.closest('label.item').classList.toggle('done', cb.checked);
+    saveDay(viewingKey, dayState);
     renderResumo();
     renderTrilha();
   });
@@ -431,34 +563,31 @@ document.querySelectorAll('input[data-day-item]').forEach(function(cb){
 
 document.querySelectorAll('input[data-week-item]').forEach(function(cb){
   var id = cb.getAttribute('data-week-item');
-  var label = cb.closest('label.item');
-  cb.checked = !!weekState.weekly[id];
-  if(cb.checked) label.classList.add('done');
   cb.addEventListener('change', function(){
     weekState.weekly[id] = cb.checked;
-    label.classList.toggle('done', cb.checked);
-    saveWeek(weekKey, weekState);
+    cb.closest('label.item').classList.toggle('done', cb.checked);
+    saveWeek(isoWeekKey(viewingDate), weekState);
   });
 });
 
 function renderResumo(){
   var n = Object.values(dayState.daily).filter(Boolean).length;
   var el = document.getElementById('resumoHoje');
-  if(n === 0) el.textContent = 'ainda nada marcado — sem problema';
-  else el.textContent = 'hoje você viveu ' + n + (n>1 ? ' coisas' : ' coisa');
+  var pronome = viewingKey === todayKey ? 'hoje' : 'nesse dia';
+  if(n === 0) el.textContent = 'ainda nada marcado ' + pronome + ' — sem problema';
+  else el.textContent = pronome.charAt(0).toUpperCase()+pronome.slice(1) + ' você viveu ' + n + (n>1 ? ' coisas' : ' coisa');
 }
 
 var trilhaCache = {};
 function renderTrilha(){
   var row = document.getElementById('trilhaRow');
   row.innerHTML = '';
-  var abrevDias = ['D','S','T','Q','Q','S','S'];
   for(var i = 13; i >= 0; i--){
     var d = new Date(today);
     d.setDate(d.getDate() - i);
     var key = dateKey(d);
     var count;
-    if(key === todayKey){
+    if(key === viewingKey){
       count = Object.values(dayState.daily).filter(Boolean).length;
     } else if(trilhaCache[key] !== undefined){
       count = trilhaCache[key];
@@ -468,26 +597,23 @@ function renderTrilha(){
       trilhaCache[key] = count;
     }
     var intensity = Math.min(count / 6, 1);
-    var dot = document.createElement('div');
-    dot.className = 'pegada';
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'pegada';
     var bg = intensity === 0 ? 'var(--bg-raised-2)' :
       'color-mix(in srgb, var(--amber) ' + Math.round(intensity*90) + '%, var(--bg-raised-2))';
-    dot.innerHTML = '<div class="dot' + (key===todayKey?' today':'') + '" style="background:' + bg + '"></div><div class="lbl">' + abrevDias[d.getDay()] + '</div>';
-    row.appendChild(dot);
+    var classes = 'dot' + (key===todayKey?' today':'') + (key===viewingKey?' selected':'');
+    btn.innerHTML = '<div class="' + classes + '" style="background:' + bg + '"></div><div class="lbl">' + diasSemanaAbrev[d.getDay()].charAt(0).toUpperCase() + '</div>';
+    (function(dd){ btn.addEventListener('click', function(){ selectDate(dd); }); })(new Date(d));
+    row.appendChild(btn);
   }
 
   var streak = 0;
   var cursor = new Date(today);
   while(true){
     var k = dateKey(cursor);
-    var val;
-    if(k === todayKey) val = !!dayState.daily['cigarro'];
-    else{
-      var s = loadDay(k);
-      val = !!s.daily['cigarro'];
-    }
-    if(val){ streak++; cursor.setDate(cursor.getDate()-1); }
-    else break;
+    var val = (k === viewingKey) ? !!dayState.daily['cigarro'] : !!loadDay(k).daily['cigarro'];
+    if(val){ streak++; cursor.setDate(cursor.getDate()-1); } else break;
   }
   document.getElementById('streakLbl').textContent =
     streak > 0 ? (streak + (streak>1 ? ' dias' : ' dia') + ' sem cigarro') : '';
@@ -497,7 +623,7 @@ function renderHistorico(){
   var box = document.getElementById('historico');
   box.innerHTML = '';
   var any = false;
-  for(var i = 1; i <= 10; i++){
+  for(var i = 0; i <= 30; i++){
     var d = new Date(today);
     d.setDate(d.getDate() - i);
     var key = dateKey(d);
@@ -507,13 +633,13 @@ function renderHistorico(){
       var div = document.createElement('div');
       div.className = 'hist-item';
       div.innerHTML = '<span class="hist-data">' + d.getDate() + ' de ' + meses[d.getMonth()] + '</span>' + st.reflexao;
+      (function(dd){ div.addEventListener('click', function(){ selectDate(dd); window.scrollTo({top:0, behavior:'smooth'}); }); })(new Date(d));
       box.appendChild(div);
     }
   }
   if(!any) box.innerHTML = '<div class="hist-item" style="border-color:transparent">nada por aqui ainda.</div>';
 }
 
-document.getElementById('reflexaoTexto').value = dayState.reflexao || '';
 var saveTimer = null;
 document.getElementById('reflexaoTexto').addEventListener('input', function(e){
   dayState.reflexao = e.target.value;
@@ -521,15 +647,118 @@ document.getElementById('reflexaoTexto').addEventListener('input', function(e){
   hint.textContent = 'salvando...';
   clearTimeout(saveTimer);
   saveTimer = setTimeout(function(){
-    saveDay(todayKey, dayState);
+    saveDay(viewingKey, dayState);
     hint.textContent = 'salvo';
     setTimeout(function(){ if(hint.textContent==='salvo') hint.textContent=''; }, 1500);
+    renderHistorico();
   }, 600);
 });
 
-renderResumo();
-renderTrilha();
-renderHistorico();
+document.getElementById('btnAnterior').addEventListener('click', function(){
+  var d = new Date(viewingDate); d.setDate(d.getDate()-1); selectDate(d);
+});
+document.getElementById('btnProximo').addEventListener('click', function(){
+  if(viewingKey === todayKey) return;
+  var d = new Date(viewingDate); d.setDate(d.getDate()+1); selectDate(d);
+});
+document.getElementById('btnHoje').addEventListener('click', function(){ selectDate(new Date(today)); });
+document.getElementById('dataInput').addEventListener('change', function(e){
+  if(!e.target.value) return;
+  var p = e.target.value.split('-');
+  var d = new Date(parseInt(p[0]), parseInt(p[1])-1, parseInt(p[2]));
+  if(d > today) d = new Date(today);
+  selectDate(d);
+});
+document.getElementById('dataInput').max = todayKey;
+
+function renderStats(){
+  var entradas = [];
+  for(var i = 0; i < localStorage.length; i++){
+    var k = localStorage.key(i);
+    if(k.indexOf('trilha:day:') === 0){
+      var key = k.substring('trilha:day:'.length);
+      var st;
+      try{ st = JSON.parse(localStorage.getItem(k)); }catch(e){ continue; }
+      var temAlgo = Object.values(st.daily||{}).some(Boolean) || (st.reflexao && st.reflexao.trim());
+      if(temAlgo) entradas.push({ key: key, daily: st.daily||{}, reflexao: st.reflexao||'' });
+    }
+  }
+  entradas.sort(function(a,b){ return a.key < b.key ? -1 : 1; });
+
+  var sub = document.getElementById('statsSub');
+  if(entradas.length === 0){
+    sub.textContent = 'ainda sem registros suficientes — vá marcando os dias que já aparece aqui.';
+    document.getElementById('statsDestaques').innerHTML = '';
+    document.getElementById('statsDiarias').innerHTML = '';
+    document.getElementById('statsSemanais').innerHTML = '';
+    return;
+  }
+  var primeiro = keyToDate(entradas[0].key);
+  sub.textContent = 'acompanhando desde ' + primeiro.getDate() + ' de ' + meses[primeiro.getMonth()] + ' — ' + entradas.length + (entradas.length>1?' dias registrados':' dia registrado');
+
+  // sequências de cigarro (calendário contínuo)
+  var setCigarro = {};
+  entradas.forEach(function(e){ if(e.daily.cigarro) setCigarro[e.key] = true; });
+  var melhorSeq = 0, seqAtualCalc = 0;
+  var cursor = new Date(today);
+  while(setCigarro[dateKey(cursor)]){ seqAtualCalc++; cursor.setDate(cursor.getDate()-1); }
+  var todasChaves = Object.keys(setCigarro).sort();
+  var run = 0, anterior = null;
+  todasChaves.forEach(function(k){
+    var d = keyToDate(k);
+    if(anterior && (d - anterior) === 86400000) run++;
+    else run = 1;
+    if(run > melhorSeq) melhorSeq = run;
+    anterior = d;
+  });
+
+  var mediaItens = (entradas.reduce(function(acc,e){ return acc + Object.values(e.daily).filter(Boolean).length; }, 0) / entradas.length).toFixed(1);
+
+  var destaques = document.getElementById('statsDestaques');
+  destaques.innerHTML =
+    '<div class="stat-card"><div class="num">' + seqAtualCalc + '</div><div class="lbl">dias sem cigarro (atual)</div></div>' +
+    '<div class="stat-card"><div class="num">' + melhorSeq + '</div><div class="lbl">melhor sequência</div></div>' +
+    '<div class="stat-card"><div class="num">' + mediaItens + '</div><div class="lbl">média de coisas por dia</div></div>';
+
+  var diariasBox = document.getElementById('statsDiarias');
+  diariasBox.innerHTML = '';
+  Object.keys(DAILY_LABELS).forEach(function(id){
+    var count = entradas.filter(function(e){ return !!e.daily[id]; }).length;
+    var pct = Math.round((count / entradas.length) * 100);
+    var div = document.createElement('div');
+    div.className = 'barra-item';
+    div.innerHTML = '<div class="topo"><span>' + DAILY_LABELS[id] + '</span><span>' + count + ' de ' + entradas.length + '</span></div>' +
+      '<div class="barra-fundo"><div class="barra-preenchida" style="width:' + pct + '%"></div></div>';
+    diariasBox.appendChild(div);
+  });
+
+  var semanas = {};
+  for(var j = 0; j < localStorage.length; j++){
+    var kk = localStorage.key(j);
+    if(kk.indexOf('trilha:week:') === 0){
+      var wkey = kk.substring('trilha:week:'.length);
+      var wst;
+      try{ wst = JSON.parse(localStorage.getItem(kk)); }catch(e){ continue; }
+      if(Object.values(wst.weekly||{}).some(Boolean)) semanas[wkey] = wst.weekly;
+    }
+  }
+  var totalSemanas = Object.keys(semanas).length;
+  var semanaisBox = document.getElementById('statsSemanais');
+  semanaisBox.innerHTML = '';
+  if(totalSemanas === 0){
+    semanaisBox.innerHTML = '<p class="item-sub">ainda sem semanas registradas.</p>';
+  } else {
+    Object.keys(WEEKLY_LABELS).forEach(function(id){
+      var count = Object.values(semanas).filter(function(w){ return !!w[id]; }).length;
+      var pct = Math.round((count / totalSemanas) * 100);
+      var div = document.createElement('div');
+      div.className = 'barra-item';
+      div.innerHTML = '<div class="topo"><span>' + WEEKLY_LABELS[id] + '</span><span>' + count + ' de ' + totalSemanas + ' semanas</span></div>' +
+        '<div class="barra-fundo"><div class="barra-preenchida" style="width:' + pct + '%; background:var(--blue);"></div></div>';
+      semanaisBox.appendChild(div);
+    });
+  }
+}
 
 document.getElementById('btnCopiarBackup').addEventListener('click', function(){
   var dados = {};
@@ -557,15 +786,20 @@ document.getElementById('btnRestaurarBackup').addEventListener('click', function
   if(!texto){ hint.textContent = 'cole um backup no campo acima primeiro'; return; }
   try{
     var dados = JSON.parse(texto);
-    Object.keys(dados).forEach(function(k){
-      if(k.indexOf('trilha:') === 0) localStorage.setItem(k, dados[k]);
-    });
+    Object.keys(dados).forEach(function(k){ if(k.indexOf('trilha:') === 0) localStorage.setItem(k, dados[k]); });
     hint.textContent = 'restaurado — recarregando...';
     setTimeout(function(){ location.reload(); }, 700);
   }catch(e){
     hint.textContent = 'esse texto não parece um backup válido';
   }
 });
+
+refreshHeader();
+refreshDailyUI();
+refreshWeeklyUI();
+renderTrilha();
+renderHistorico();
+renderStats();
 </script>
 </body>
 </html>

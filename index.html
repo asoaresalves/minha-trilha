@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>Minha trilha</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -844,13 +847,16 @@ document.getElementById('btnRestaurarBackup').addEventListener('click', function
   var hint = document.getElementById('backupHint');
   var texto = document.getElementById('backupTexto').value.trim();
   if(!texto){ hint.textContent = 'cole um backup no campo acima primeiro'; return; }
+  texto = texto
+    .replace(/[\u201C\u201D\u201F\u2033]/g, '"')
+    .replace(/[\u2018\u2019]/g, "'");
   try{
     var dados = JSON.parse(texto);
     Object.keys(dados).forEach(function(k){ if(k.indexOf('trilha:') === 0) localStorage.setItem(k, dados[k]); });
     hint.textContent = 'restaurado — recarregando...';
     setTimeout(function(){ location.reload(); }, 700);
   }catch(e){
-    hint.textContent = 'esse texto não parece um backup válido';
+    hint.textContent = 'esse texto não parece um backup válido (dica: se copiou do app Notas, desligue "Pontuação Inteligente" nos Ajustes > Teclado antes de colar)';
   }
 });
 

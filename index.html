@@ -593,6 +593,7 @@ var trilhaCache = {};
 function renderTrilha(){
   var row = document.getElementById('trilhaRow');
   row.innerHTML = '';
+  var alvoBtn = null;
   for(var i = 13; i >= 0; i--){
     var d = new Date(today);
     d.setDate(d.getDate() - i);
@@ -617,6 +618,10 @@ function renderTrilha(){
     btn.innerHTML = '<div class="' + classes + '" style="background:' + bg + '"></div><div class="lbl">' + diasSemanaAbrev[d.getDay()].charAt(0).toUpperCase() + '</div>';
     (function(dd){ btn.addEventListener('click', function(){ selectDate(dd); }); })(new Date(d));
     row.appendChild(btn);
+    if(key === viewingKey) alvoBtn = btn;
+  }
+  if(alvoBtn){
+    setTimeout(function(){ alvoBtn.scrollIntoView({ behavior:'auto', inline:'center', block:'nearest' }); }, 0);
   }
 
   var streak = 0;

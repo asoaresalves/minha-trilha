@@ -92,8 +92,8 @@
     background: var(--bg-raised-2);
     border: 1px solid var(--line);
   }
-  .pegada .dot.today{ border-color: var(--amber); border-width: 1.5px; }
-  .pegada .dot.selected{ box-shadow: 0 0 0 2px var(--blue); }
+  .pegada .dot.today{ border-color: var(--amber); border-width: 2.5px; }
+  .pegada .dot.selected{ border-color: var(--blue); border-width: 2.5px; box-shadow: 0 0 0 2px rgba(127,155,176,.35); }
   .pegada .lbl{ font-size: 10.5px; color: var(--ink-faint); }
 
   .regra{
@@ -254,6 +254,10 @@
       <span class="streak" id="streakLbl"></span>
     </div>
     <div class="trilha-row" id="trilhaRow"></div>
+    <div style="display:flex; gap:14px; margin-top:.8rem; font-size:11px; color:var(--ink-faint);">
+      <span><span style="display:inline-block; width:9px; height:9px; border-radius:50%; border:2px solid var(--amber); vertical-align:middle; margin-right:4px;"></span>hoje</span>
+      <span><span style="display:inline-block; width:9px; height:9px; border-radius:50%; border:2px solid var(--blue); vertical-align:middle; margin-right:4px;"></span>dia selecionado</span>
+    </div>
   </div>
 
   <div class="regra">
@@ -424,6 +428,8 @@
     <div id="statsDiarias"></div>
     <div class="stats-grupo-titulo">Atividades semanais (semanas com pelo menos um registro)</div>
     <div id="statsSemanais"></div>
+    <div class="stats-grupo-titulo">Um conselho a partir do que você registrou</div>
+    <div id="statsConselho" style="font-size:13.5px; color:var(--ink-soft);"></div>
   </div>
 
   <div class="reflexao" id="backupBox">
@@ -558,6 +564,7 @@ document.querySelectorAll('input[data-day-item]').forEach(function(cb){
     saveDay(viewingKey, dayState);
     renderResumo();
     renderTrilha();
+    renderStats();
   });
 });
 
@@ -567,6 +574,7 @@ document.querySelectorAll('input[data-week-item]').forEach(function(cb){
     weekState.weekly[id] = cb.checked;
     cb.closest('label.item').classList.toggle('done', cb.checked);
     saveWeek(isoWeekKey(viewingDate), weekState);
+    renderStats();
   });
 });
 
@@ -602,7 +610,7 @@ function renderTrilha(){
     btn.className = 'pegada';
     var bg = intensity === 0 ? 'var(--bg-raised-2)' :
       'color-mix(in srgb, var(--amber) ' + Math.round(intensity*90) + '%, var(--bg-raised-2))';
-    var classes = 'dot' + (key===todayKey?' today':'') + (key===viewingKey?' selected':'');
+    var classes = 'dot' + (key===todayKey?' today':'') + (key===viewingKey && key!==todayKey?' selected':'');
     btn.innerHTML = '<div class="' + classes + '" style="background:' + bg + '"></div><div class="lbl">' + diasSemanaAbrev[d.getDay()].charAt(0).toUpperCase() + '</div>';
     (function(dd){ btn.addEventListener('click', function(){ selectDate(dd); }); })(new Date(d));
     row.appendChild(btn);
@@ -651,6 +659,7 @@ document.getElementById('reflexaoTexto').addEventListener('input', function(e){
     hint.textContent = 'salvo';
     setTimeout(function(){ if(hint.textContent==='salvo') hint.textContent=''; }, 1500);
     renderHistorico();
+    renderStats();
   }, 600);
 });
 
@@ -691,6 +700,7 @@ function renderStats(){
     document.getElementById('statsDestaques').innerHTML = '';
     document.getElementById('statsDiarias').innerHTML = '';
     document.getElementById('statsSemanais').innerHTML = '';
+    document.getElementById('statsConselho').innerHTML = '';
     return;
   }
   var primeiro = keyToDate(entradas[0].key);
@@ -758,6 +768,56 @@ function renderStats(){
       semanaisBox.appendChild(div);
     });
   }
+
+  // conselho gerado a partir dos dados
+  var conselhoBox = document.getElementById('statsConselho');
+  var pontos = [];
+
+  if(entradas.length < 5){
+    pontos.push('Ainda são poucos dias registrados — em mais ou menos uma semana já dá para ver padrões de verdade. Por enquanto, só de estar registrando já vale.');
+  } else {
+    var pct = {};
+    Object.keys(DAILY_LABELS).forEach(function(id){
+      pct[id] = entradas.filter(function(e){ return !!e.daily[id]; }).length / entradas.length;
+    });
+
+    var essenciais = ['cigarro','corpo','sair','contato'];
+    var essenciaisFracos = essenciais.filter(function(id){ return pct[id] < 0.5; });
+    if(essenciaisFracos.length){
+      var nomes = essenciaisFracos.map(function(id){ return DAILY_LABELS[id].toLowerCase(); }).join(', ');
+      pontos.push('Entre os itens essenciais das primeiras semanas, ' + nomes + ' apareceu(ram) em menos da metade dos dias. Não é motivo para cobrança — mas se quiser um ponto de atenção para as próximas semanas, seria esse, antes de somar mais coisas na rotina.');
+    } else {
+      pontos.push('Os itens essenciais das primeiras semanas estão bem consolidados. Pode ser um bom momento para ir somando aprendizado, leitura ou outras possibilidades com mais regularidade, sem pressa.');
+    }
+
+    var opcionais = ['aprendizado','leitura','telamusica','prazer'];
+    var nuncaFeitos = opcionais.filter(function(id){ return pct[id] === 0; });
+    if(nuncaFeitos.length){
+      var nomesNunca = nuncaFeitos.map(function(id){ return DAILY_LABELS[id].toLowerCase(); }).join(', ');
+      pontos.push(nomesNunca + ' ainda não apareceu(ram) nenhuma vez. Sem obrigação nenhuma — só fica o registro, caso um dia der vontade de experimentar.');
+    }
+
+    if(pct.redes < 0.35){
+      pontos.push('Os momentos vazios parecem ter puxado bastante para as redes sociais. Vale reparar em que horas do dia isso mais acontece — não para se cobrar, só para entender o padrão.');
+    }
+
+    if(totalSemanas >= 2){
+      var conexao = ['amigo','coletivo','novaconexao'];
+      var mediaConexao = conexao.reduce(function(acc,id){
+        var c = Object.values(semanas).filter(function(w){ return !!w[id]; }).length;
+        return acc + (c / totalSemanas);
+      }, 0) / conexao.length;
+      if(mediaConexao < 0.4){
+        pontos.push('As atividades ligadas a conhecer ou encontrar pessoas estão aparecendo pouco nas semanas registradas. Aprendizado e leitura enriquecem, mas continuam sendo individuais — vale olhar com mais atenção para esse lado social, que é o que evita que a rotina vire só estudo em casa.');
+      }
+    }
+
+    if(seqAtualCalc >= 7){
+      pontos.push(seqAtualCalc + ' dias seguidos sem cigarro é uma sequência real. Vale reconhecer isso.');
+    }
+  }
+
+  conselhoBox.innerHTML = pontos.map(function(p){ return '<p style="margin:0 0 .6rem;">' + p + '</p>'; }).join('');
 }
 
 document.getElementById('btnCopiarBackup').addEventListener('click', function(){
